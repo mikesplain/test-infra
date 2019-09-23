@@ -19,10 +19,10 @@ package spyglass
 import (
 	"context"
 	"fmt"
+	"k8s.io/test-infra/pkg/io"
 	"sync"
 	"time"
 
-	"cloud.google.com/go/storage"
 	"github.com/sirupsen/logrus"
 
 	tgconf "github.com/GoogleCloudPlatform/testgrid/config"
@@ -35,7 +35,7 @@ type TestGrid struct {
 	c      *tgconf.Configuration
 	conf   config.Getter
 	ctx    context.Context
-	client *storage.Client
+	opener io.Opener
 }
 
 // Start synchronously requests the testgrid config, then continues to update it periodically.
@@ -92,7 +92,14 @@ func (tg *TestGrid) updateConfig() error {
 		tg.setConfig(nil)
 		return nil
 	}
-	c, err := tgconf.Read(tg.conf().Deck.Spyglass.TestGridConfig, tg.ctx, tg.client)
+	// TODO: This only works with gcs, everything else will return an error
+	// If we want this to work without gcs we have to use
+	// gocloud also in the testgrid dependency
+	gcsClient, err := tg.opener.GetGCSClient(tg.ctx)
+	if err != nil {
+		return err
+	}
+	c, err := tgconf.Read(tg.conf().Deck.Spyglass.TestGridConfig, tg.ctx, gcsClient)
 	if err != nil {
 		return err
 	}

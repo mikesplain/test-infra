@@ -36,7 +36,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
 
-	"k8s.io/test-infra/pkg/io"
+	prowio "k8s.io/test-infra/pkg/io"
 	prowapi "k8s.io/test-infra/prow/apis/prowjobs/v1"
 	prowv1 "k8s.io/test-infra/prow/client/clientset/versioned/typed/prowjobs/v1"
 	"k8s.io/test-infra/prow/config"
@@ -199,7 +199,7 @@ func init() {
 }
 
 // NewController makes a Controller out of the given clients.
-func NewController(ghcSync, ghcStatus github.Client, prowJobClient prowv1.ProwJobInterface, cfg config.Getter, gc *git.Client, maxRecordsPerPool int, opener io.Opener, historyURI, statusURI string, logger *logrus.Entry) (*Controller, error) {
+func NewController(ghcSync, ghcStatus github.Client, prowJobClient prowv1.ProwJobInterface, cfg config.Getter, gc *git.Client, maxRecordsPerPool int, opener prowio.Opener, historyURI, statusURI string, logger *logrus.Entry) (*Controller, error) {
 	if logger == nil {
 		logger = logrus.NewEntry(logrus.StandardLogger())
 	}

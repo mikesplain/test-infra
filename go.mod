@@ -4,14 +4,14 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20190301231843-5614ed
 
 require (
 	cloud.google.com/go v0.44.3
-	github.com/Azure/azure-sdk-for-go v21.1.0+incompatible
-	github.com/Azure/azure-storage-blob-go v0.0.0-20190123011202-457680cc0804
-	github.com/Azure/go-autorest v11.1.2+incompatible
-	github.com/GoogleCloudPlatform/testgrid v0.0.0-20190917190143-e27da30ca94e
+	github.com/Azure/azure-sdk-for-go v30.1.0+incompatible
+	github.com/Azure/azure-storage-blob-go v0.6.0
+	github.com/Azure/go-autorest v12.0.0+incompatible
+	github.com/GoogleCloudPlatform/testgrid v0.0.0-20190919235938-9a01187e28a6
 	github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46
 	github.com/andygrunwald/go-gerrit v0.0.0-20190120104749-174420ebee6c
 	github.com/aws/aws-k8s-tester v0.0.0-20190114231546-b411acf57dfe
-	github.com/aws/aws-sdk-go v1.16.36
+	github.com/aws/aws-sdk-go v1.19.45
 	github.com/bazelbuild/bazel-gazelle v0.18.1
 	github.com/bazelbuild/buildtools v0.0.0-20190404153937-93253d6efaa9
 	github.com/bwmarrin/snowflake v0.0.0
@@ -28,7 +28,7 @@ require (
 	github.com/gomodule/redigo v1.7.0
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/uuid v1.1.1
-	github.com/gorilla/csrf v1.6.1
+	github.com/gorilla/csrf v1.6.0
 	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.1.3
 	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc
@@ -43,22 +43,21 @@ require (
 	github.com/peterbourgon/diskv v0.0.0-20171120014656-2973218375c3
 	github.com/pkg/errors v0.8.1
 	github.com/prometheus/client_golang v0.9.4
-	github.com/prometheus/procfs v0.0.5 // indirect
-	github.com/rogpeppe/go-internal v1.3.2 // indirect
 	github.com/satori/go.uuid v0.0.0-20160713180306-0aa62d5ddceb
 	github.com/shurcooL/githubv4 v0.0.0-20180925043049-51d7b505e2e9
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
-	github.com/spf13/pflag v1.0.3
+	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.3.2
 	github.com/tektoncd/pipeline v0.1.1-0.20190327171839-7c43fbae2816
+	gocloud.dev v0.17.0
 	golang.org/x/crypto v0.0.0-20190611184440-5c40567a22f8
 	golang.org/x/lint v0.0.0-20190409202823-959b441ac422
-	golang.org/x/net v0.0.0-20190812203447-cdfb69ac37fc
+	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
-	golang.org/x/tools v0.0.0-20190628153133-6cdbf07be9d0
+	golang.org/x/tools v0.0.0-20190909030654-5b82db07426d
 	google.golang.org/api v0.9.0
 	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5
 	gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
@@ -68,9 +67,9 @@ require (
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	k8s.io/code-generator v0.0.0-20190831074504-732c9ca86353
 	k8s.io/klog v0.4.0
-	k8s.io/repo-infra v0.0.0-20190921032325-1fedfadec8ce
+	k8s.io/repo-infra v0.0.0-20190921220523-24cc8eb96f26
 	mvdan.cc/xurls/v2 v2.0.0
-	sigs.k8s.io/controller-runtime v0.2.1
+	sigs.k8s.io/controller-runtime v0.2.0
 	sigs.k8s.io/yaml v1.1.0
 )
 

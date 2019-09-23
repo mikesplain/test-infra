@@ -33,7 +33,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"sigs.k8s.io/yaml"
 
-	"k8s.io/test-infra/pkg/io"
+	prowio "k8s.io/test-infra/pkg/io"
 	"k8s.io/test-infra/prow/config"
 	"k8s.io/test-infra/prow/github"
 	"k8s.io/test-infra/prow/tide/blockers"
@@ -76,7 +76,7 @@ type statusController struct {
 	blocks  blockers.Blockers
 
 	storedState
-	opener io.Opener
+	opener prowio.Opener
 	path   string
 }
 
@@ -352,12 +352,12 @@ func (sc *statusController) load() {
 		return
 	}
 	entry := sc.logger.WithField("path", sc.path)
-	reader, err := sc.opener.Reader(context.Background(), sc.path)
+	reader, err := sc.opener.Reader(context.Background(), sc.path, nil)
 	if err != nil {
 		entry.WithError(err).Warn("Cannot open stored state")
 		return
 	}
-	defer io.LogClose(reader)
+	defer prowio.LogClose(reader)
 
 	buf, err := ioutil.ReadAll(reader)
 	if err != nil {
@@ -385,14 +385,14 @@ func (sc *statusController) save(ticker *time.Ticker) {
 			entry.WithError(err).Warn("Cannot marshal state")
 			continue
 		}
-		writer, err := sc.opener.Writer(context.Background(), sc.path)
+		writer, err := sc.opener.Writer(context.Background(), sc.path, nil)
 		if err != nil {
 			entry.WithError(err).Warn("Cannot open state writer")
 			continue
 		}
 		if _, err = writer.Write(buf); err != nil {
 			entry.WithError(err).Warn("Cannot write state")
-			io.LogClose(writer)
+			prowio.LogClose(writer)
 			continue
 		}
 		if err := writer.Close(); err != nil {
