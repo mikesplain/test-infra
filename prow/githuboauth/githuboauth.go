@@ -50,7 +50,7 @@ type GitHubClientWrapper interface {
 
 // GitHubClientGetter interface is used by handleRedirect to get a GitHub client.
 type GitHubClientGetter interface {
-	GetGitHubClient(accessToken string, dryRun bool) GitHubClientWrapper
+	GetGitHubClient(endpointURL *url.URL, accessToken string, dryRun bool) GitHubClientWrapper
 }
 
 // OAuthClient is an interface for a GitHub OAuth client.
@@ -94,8 +94,8 @@ func (cli client) WithFinalRedirectURL(path string) (OAuthClient, error) {
 
 type githubClientGetter struct{}
 
-func (gci *githubClientGetter) GetGitHubClient(accessToken string, dryRun bool) GitHubClientWrapper {
-	return ghclient.NewClient(accessToken, dryRun)
+func (gci *githubClientGetter) GetGitHubClient(baseURL *url.URL, accessToken string, dryRun bool) GitHubClientWrapper {
+	return ghclient.NewClient(baseURL, accessToken, dryRun)
 }
 
 // NewGitHubClientGetter returns a new instance of GitHubClientGetter. It uses the
@@ -150,7 +150,7 @@ func (ga *Agent) HandleLogin(client OAuthClient, secure bool) http.HandlerFunc {
 }
 
 // GetLogin returns the username of the already authenticated GitHub user.
-func (ga *Agent) GetLogin(r *http.Request, getter GitHubClientGetter) (string, error) {
+func (ga *Agent) GetLogin(endpointURL *url.URL, r *http.Request, getter GitHubClientGetter) (string, error) {
 	session, err := ga.gc.CookieStore.Get(r, tokenSession)
 	if err != nil {
 		return "", err
@@ -159,7 +159,7 @@ func (ga *Agent) GetLogin(r *http.Request, getter GitHubClientGetter) (string, e
 	if !ok || !token.Valid() {
 		return "", fmt.Errorf("Could not find GitHub token")
 	}
-	ghc := getter.GetGitHubClient(token.AccessToken, false)
+	ghc := getter.GetGitHubClient(endpointURL, token.AccessToken, false)
 	userInfo, err := ghc.GetUser("")
 	if err != nil {
 		return "", err
@@ -195,7 +195,7 @@ func (ga *Agent) HandleLogout(client OAuthClient) http.HandlerFunc {
 // HandleRedirect handles the redirection from GitHub. It exchanges the code from redirect URL for
 // user access token. The access token is then saved to the cookie and the page is redirected to
 // the final destination in the config, which should be the front-end.
-func (ga *Agent) HandleRedirect(client OAuthClient, getter GitHubClientGetter, secure bool) http.HandlerFunc {
+func (ga *Agent) HandleRedirect(endpointURL *url.URL, client OAuthClient, getter GitHubClientGetter, secure bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		finalRedirectURL, err := r.URL.Parse(r.URL.Query().Get("dest"))
 		//This check prevents someone from specifying a different host to redirect to.
@@ -267,7 +267,7 @@ func (ga *Agent) HandleRedirect(client OAuthClient, getter GitHubClientGetter, s
 			ga.serverError(w, "Save session", err)
 			return
 		}
-		ghc := getter.GetGitHubClient(token.AccessToken, false)
+		ghc := getter.GetGitHubClient(endpointURL, token.AccessToken, false)
 		user, err := ghc.GetUser("")
 		if err != nil {
 			ga.serverError(w, "Get user login", err)

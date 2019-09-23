@@ -30,8 +30,9 @@ import (
 
 // GitHubOptions holds options for interacting with GitHub.
 type GitHubOptions struct {
-	endpoint            Strings
-	graphqlEndpoint     string
+	GitEndpoint         string
+	Endpoint            Strings
+	GraphqlEndpoint     string
 	TokenPath           string
 	deprecatedTokenFile string
 }
@@ -49,9 +50,10 @@ func (o *GitHubOptions) AddFlagsWithoutDefaultGitHubTokenPath(fs *flag.FlagSet) 
 }
 
 func (o *GitHubOptions) addFlags(wantDefaultGitHubTokenPath bool, fs *flag.FlagSet) {
-	o.endpoint = NewStrings(github.DefaultAPIEndpoint)
-	fs.Var(&o.endpoint, "github-endpoint", "GitHub's API endpoint (may differ for enterprise).")
-	fs.StringVar(&o.graphqlEndpoint, "github-graphql-endpoint", github.DefaultGraphQLEndpoint, "GitHub GraphQL API endpoint (may differ for enterprise).")
+	o.Endpoint = NewStrings(github.DefaultAPIEndpoint)
+	fs.Var(&o.Endpoint, "github-endpoint", "GitHub's API endpoint (may differ for enterprise).")
+	fs.StringVar(&o.GraphqlEndpoint, "github-graphql-endpoint", github.DefaultGraphQLEndpoint, "GitHub GraphQL API endpoint (may differ for enterprise).")
+	fs.StringVar(&o.GitEndpoint, "git-endpoint", "https://github.com", "Git endpoint (may differ for enterprise).")
 	defaultGitHubTokenPath := ""
 	if wantDefaultGitHubTokenPath {
 		defaultGitHubTokenPath = "/etc/github/oauth"
@@ -62,7 +64,7 @@ func (o *GitHubOptions) addFlags(wantDefaultGitHubTokenPath bool, fs *flag.FlagS
 
 // Validate validates GitHub options.
 func (o *GitHubOptions) Validate(dryRun bool) error {
-	for _, uri := range o.endpoint.Strings() {
+	for _, uri := range o.Endpoint.Strings() {
 		if uri == "" {
 			uri = github.DefaultAPIEndpoint
 		} else if _, err := url.ParseRequestURI(uri); err != nil {
@@ -70,10 +72,10 @@ func (o *GitHubOptions) Validate(dryRun bool) error {
 		}
 	}
 
-	if o.graphqlEndpoint == "" {
-		o.graphqlEndpoint = github.DefaultGraphQLEndpoint
-	} else if _, err := url.Parse(o.graphqlEndpoint); err != nil {
-		return fmt.Errorf("invalid -github-graphql-endpoint URI: %q", o.graphqlEndpoint)
+	if o.GraphqlEndpoint == "" {
+		o.GraphqlEndpoint = github.DefaultGraphQLEndpoint
+	} else if _, err := url.Parse(o.GraphqlEndpoint); err != nil {
+		return fmt.Errorf("invalid -github-graphql-endpoint URI: %q", o.GraphqlEndpoint)
 	}
 
 	if o.deprecatedTokenFile != "" {
@@ -102,9 +104,9 @@ func (o *GitHubOptions) GitHubClientWithLogFields(secretAgent *secret.Agent, dry
 	}
 
 	if dryRun {
-		return github.NewDryRunClientWithFields(fields, *generator, secretAgent.Censor, o.graphqlEndpoint, o.endpoint.Strings()...), nil
+		return github.NewDryRunClientWithFields(fields, *generator, secretAgent.Censor, o.GraphqlEndpoint, o.Endpoint.Strings()...), nil
 	}
-	return github.NewClientWithFields(fields, *generator, secretAgent.Censor, o.graphqlEndpoint, o.endpoint.Strings()...), nil
+	return github.NewClientWithFields(fields, *generator, secretAgent.Censor, o.GraphqlEndpoint, o.Endpoint.Strings()...), nil
 }
 
 // GitHubClient returns a GitHub client.
@@ -114,7 +116,7 @@ func (o *GitHubOptions) GitHubClient(secretAgent *secret.Agent, dryRun bool) (cl
 
 // GitClient returns a Git client.
 func (o *GitHubOptions) GitClient(secretAgent *secret.Agent, dryRun bool) (client *git.Client, err error) {
-	client, err = git.NewClient()
+	client, err = git.NewClient(o.GitEndpoint)
 	if err != nil {
 		return nil, err
 	}

@@ -518,9 +518,11 @@ func applyRoleBinding(context string) error {
 }
 
 type options struct {
-	githubTokenPath string
-	starter         string
-	repos           flagutil.Strings
+	githubTokenPath     string
+	githubAPIURL        string
+	githubGraphQLAPIURL string
+	starter             string
+	repos               flagutil.Strings
 	contextOptions
 	confirm bool
 }
@@ -535,6 +537,9 @@ type contextOptions struct {
 func addFlags(fs *flag.FlagSet) *options {
 	var o options
 	fs.StringVar(&o.githubTokenPath, "github-token-path", "", "Path to github token")
+	fs.StringVar(&o.githubAPIURL, "github-endpoint", github.DefaultAPIEndpoint, "URL of Github API")
+	fs.StringVar(&o.githubGraphQLAPIURL, "github-graphql-endpoint", github.DefaultGraphQLEndpoint, "URL of Github GraphQL API")
+
 	fs.StringVar(&o.starter, "starter", "", "Apply starter.yaml from the following path or URL (use upstream for latest)")
 	fs.Var(&o.repos, "repo", "Send prow webhooks for these orgs or org/repos (repeat as necessary)")
 	fs.StringVar(&o.context, "context", "", "Choose kubeconfig context to use")
@@ -557,7 +562,7 @@ func githubToken(choice string) (string, error) {
 	return path, nil
 }
 
-func githubClient(tokenPath string, dry bool) (github.Client, error) {
+func githubClient(apiURL, graphQLAPIURL, tokenPath string, dry bool) (github.Client, error) {
 	secretAgent := &secret.Agent{}
 	if err := secretAgent.Start([]string{tokenPath}); err != nil {
 		return nil, fmt.Errorf("start agent: %v", err)
@@ -566,9 +571,9 @@ func githubClient(tokenPath string, dry bool) (github.Client, error) {
 	gen := secretAgent.GetTokenGenerator(tokenPath)
 	censor := secretAgent.Censor
 	if dry {
-		return github.NewDryRunClient(gen, censor, github.DefaultGraphQLEndpoint, github.DefaultAPIEndpoint), nil
+		return github.NewDryRunClient(gen, censor, graphQLAPIURL, apiURL), nil
 	}
-	return github.NewClient(gen, censor, github.DefaultGraphQLEndpoint, github.DefaultAPIEndpoint), nil
+	return github.NewClient(gen, censor, graphQLAPIURL, apiURL), nil
 }
 
 func applySecret(ctx, ns, name, key, path string) error {
@@ -937,7 +942,7 @@ func main() {
 		if err != nil {
 			logrus.WithError(err).Fatal("Failed to get github token")
 		}
-		client, err := githubClient(token, false)
+		client, err := githubClient(opt.githubAPIURL, opt.githubGraphQLAPIURL, token, false)
 		if err != nil {
 			logrus.WithError(err).Fatal("Failed to create github client")
 		}

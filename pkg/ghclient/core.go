@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/golang/glog"
@@ -46,7 +47,7 @@ type Client struct {
 }
 
 // NewClient makes a new Client with the specified token and dry-run status.
-func NewClient(token string, dryRun bool) *Client {
+func NewClient(baseURL *url.URL, token string, dryRun bool) *Client {
 	httpClient := &http.Client{
 		Transport: &oauth2.Transport{
 			Base:   http.DefaultTransport,
@@ -54,6 +55,7 @@ func NewClient(token string, dryRun bool) *Client {
 		},
 	}
 	client := github.NewClient(httpClient)
+	client.BaseURL = baseURL
 	return &Client{
 		issueService:        client.Issues,
 		prService:           client.PullRequests,

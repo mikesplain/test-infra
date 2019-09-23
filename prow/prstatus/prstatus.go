@@ -170,7 +170,7 @@ func invalidateGitHubSession(w http.ResponseWriter, r *http.Request, session *se
 // endpoint. The handler takes user access token stored in the cookie to query to GitHub on behalf
 // of the user and serve the data in return. The Query handler is passed to the method so as it
 // can be mocked in the unit test..
-func (da *DashboardAgent) HandlePrStatus(queryHandler PullRequestQueryHandler) http.HandlerFunc {
+func (da *DashboardAgent) HandlePrStatus(githubEndpoint, githubGraphQLEndpoint string, queryHandler PullRequestQueryHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		serverError := func(action string, err error) {
 			da.log.WithError(err).Errorf("Error %s.", action)
@@ -203,7 +203,7 @@ func (da *DashboardAgent) HandlePrStatus(queryHandler PullRequestQueryHandler) h
 		var user *github.User
 		var botName string
 		if ok && token.Valid() {
-			githubClient := github.NewClient(func() []byte { return []byte(token.AccessToken) }, noopCensor, github.DefaultGraphQLEndpoint, github.DefaultAPIEndpoint)
+			githubClient := github.NewClient(func() []byte { return []byte(token.AccessToken) }, noopCensor, githubGraphQLEndpoint, githubEndpoint)
 			var err error
 			botName, err = githubClient.BotName()
 			user = &github.User{Login: botName}
@@ -240,7 +240,7 @@ func (da *DashboardAgent) HandlePrStatus(queryHandler PullRequestQueryHandler) h
 			}
 
 			// Construct query
-			ghc := github.NewClient(func() []byte { return []byte(token.AccessToken) }, noopCensor, github.DefaultGraphQLEndpoint, github.DefaultAPIEndpoint)
+			ghc := github.NewClient(func() []byte { return []byte(token.AccessToken) }, noopCensor, githubGraphQLEndpoint, githubEndpoint)
 			query := da.ConstructSearchQuery(login)
 			if err := r.ParseForm(); err == nil {
 				if q := r.Form.Get("query"); q != "" {

@@ -31,10 +31,12 @@ type Cookie struct {
 // GitHubOAuthConfig is a config for requesting users access tokens from GitHub API. It also has
 // a Cookie Store that retains user credentials deriving from GitHub API.
 type GitHubOAuthConfig struct {
-	ClientID     string   `json:"client_id"`
-	ClientSecret string   `json:"client_secret"`
-	RedirectURL  string   `json:"redirect_url"`
-	Scopes       []string `json:"scopes,omitempty"`
+	ClientID            string   `json:"client_id"`
+	ClientSecret        string   `json:"client_secret"`
+	GithubOAuthAuthUrl  string   `json:"github_oauth_auth_url"`
+	GithubOAuthTokenUrl string   `json:"github_oauth_token_url"`
+	RedirectURL         string   `json:"redirect_url"`
+	Scopes              []string `json:"scopes,omitempty"`
 
 	CookieStore *sessions.CookieStore `json:"-"`
 }

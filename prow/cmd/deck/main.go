@@ -42,8 +42,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/github"
-	"google.golang.org/api/option"
 	coreapi "k8s.io/api/core/v1"
 	kerrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -549,6 +547,10 @@ func prodOnlyMain(cfg config.Getter, pluginAgent *plugins.ConfigAgent, o options
 
 	// Enable Git OAuth feature if oauthURL is provided.
 	var goa *githuboauth.Agent
+	endpointURL, err := url.Parse(o.github.Endpoint.String() + "/")
+	if err != nil {
+		logrus.WithError(err).Fatal("Error decoding github endpoint")
+	}
 	if o.oauthURL != "" {
 		githubOAuthConfigRaw, err := loadToken(o.githubOAuthConfigFile)
 		if err != nil {
@@ -567,6 +569,12 @@ func prodOnlyMain(cfg config.Getter, pluginAgent *plugins.ConfigAgent, o options
 		if !isValidatedGitOAuthConfig(&githubOAuthConfig) {
 			logrus.Fatal("Error invalid github oauth config")
 		}
+		if githubOAuthConfig.GithubOAuthAuthUrl == "" {
+			githubOAuthConfig.GithubOAuthAuthUrl = github.Endpoint.AuthURL
+		}
+		if githubOAuthConfig.GithubOAuthTokenUrl == "" {
+			githubOAuthConfig.GithubOAuthTokenUrl = github.Endpoint.TokenURL
+		}
 
 		decodedSecret, err := base64.StdEncoding.DecodeString(string(cookieSecretRaw))
 		if err != nil {
@@ -584,9 +592,11 @@ func prodOnlyMain(cfg config.Getter, pluginAgent *plugins.ConfigAgent, o options
 			ClientSecret: githubOAuthConfig.ClientSecret,
 			RedirectURL:  githubOAuthConfig.RedirectURL,
 			Scopes:       githubOAuthConfig.Scopes,
-			Endpoint:     github.Endpoint,
-		},
-		)
+			Endpoint: oauth2.Endpoint{
+				AuthURL:  githubOAuthConfig.GithubOAuthAuthUrl,
+				TokenURL: githubOAuthConfig.GithubOAuthTokenUrl,
+			},
+		})
 
 		repos := cfg().AllRepos.List()
 
@@ -598,14 +608,14 @@ func prodOnlyMain(cfg config.Getter, pluginAgent *plugins.ConfigAgent, o options
 		secure := !o.allowInsecure
 
 		mux.Handle("/pr-data.js", handleNotCached(
-			prStatusAgent.HandlePrStatus(prStatusAgent)))
+			prStatusAgent.HandlePrStatus(o.github.Endpoint.String(), o.github.GraphqlEndpoint, prStatusAgent)))
 		// Handles login request.
 		mux.Handle("/github-login", goa.HandleLogin(oauthClient, secure))
 		// Handles redirect from GitHub OAuth server.
-		mux.Handle("/github-login/redirect", goa.HandleRedirect(oauthClient, githuboauth.NewGitHubClientGetter(), secure))
+		mux.Handle("/github-login/redirect", goa.HandleRedirect(endpointURL, oauthClient, githuboauth.NewGitHubClientGetter(), secure))
 	}
 
-	mux.Handle("/rerun", gziphandler.GzipHandler(handleRerun(prowJobClient, o.rerunCreatesJob, cfgGetter, goa, githuboauth.NewGitHubClientGetter(), githubClient, pluginAgent, logrus.WithField("handler", "/rerun"))))
+	mux.Handle("/rerun", gziphandler.GzipHandler(handleRerun(endpointURL, prowJobClient, o.rerunCreatesJob, cfgGetter, goa, githuboauth.NewGitHubClientGetter(), githubClient, pluginAgent, logrus.WithField("handler", "/rerun"))))
 
 	// optionally inject http->https redirect handler when behind loadbalancer
 	if o.redirectHTTPTo != "" {
@@ -823,7 +833,7 @@ func handleJobHistory(o options, cfg config.Getter, gcsClient *storage.Client, l
 func handlePRHistory(o options, cfg config.Getter, gcsClient *storage.Client, gitHubClient deckGitHubClient, gitClient *git.Client, log *logrus.Entry) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		setHeadersNoCaching(w)
-		tmpl, err := getPRHistory(r.URL, cfg(), gcsClient, gitHubClient, gitClient)
+		tmpl, err := getPRHistory(r.URL, cfg(), opener, gitHubClient, gitClient, o.github.GitEndpoint)
 		if err != nil {
 			msg := fmt.Sprintf("failed to get PR history: %v", err)
 			log.WithField("url", r.URL).Info(msg)
@@ -1326,7 +1336,7 @@ func canTriggerJob(user string, pj prowapi.ProwJob, cfg *prowapi.RerunAuthConfig
 // handleRerun triggers a rerun of the given job if that features is enabled, it receives a
 // POST request, and the user has the necessary permissions. Otherwise, it writes the config
 // for a new job but does not trigger it.
-func handleRerun(prowJobClient prowv1.ProwJobInterface, createProwJob bool, cfg authCfgGetter, goa *githuboauth.Agent, ghc githuboauth.GitHubClientGetter, cli prowgithub.RerunClient, pluginAgent *plugins.ConfigAgent, log *logrus.Entry) http.HandlerFunc {
+func handleRerun(endpointURL *url.URL, prowJobClient prowv1.ProwJobInterface, createProwJob bool, cfg authCfgGetter, goa *githuboauth.Agent, ghc githuboauth.GitHubClientGetter, cli prowgithub.RerunClient, pluginAgent *plugins.ConfigAgent, log *logrus.Entry) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("prowjob")
 		l := log.WithField("prowjob", name)
@@ -1365,7 +1375,7 @@ func handleRerun(prowJobClient prowv1.ProwJobInterface, createProwJob bool, cfg 
 					l.Error(msg)
 					return
 				}
-				login, err := goa.GetLogin(r, ghc)
+				login, err := goa.GetLogin(endpointURL, r, ghc)
 				if err != nil {
 					l.WithError(err).Errorf("Error retrieving GitHub login")
 					http.Error(w, "Error retrieving GitHub login", http.StatusUnauthorized)
