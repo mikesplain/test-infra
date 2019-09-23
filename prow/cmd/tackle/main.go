@@ -686,6 +686,7 @@ func ingress(kc *kubernetes.Clientset, ns, service string) (url.URL, error) {
 			}
 
 			if cur == 0 {
+				return maybe, nil
 				for _, i := range ing.Status.LoadBalancer.Ingress {
 					if maybe.Host != "" && maybe.Host == i.Hostname {
 						cur = 2

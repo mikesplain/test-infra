@@ -404,7 +404,8 @@ func (sc *statusController) save(ticker *time.Ticker) {
 
 func (sc *statusController) run() {
 	sc.load()
-	ticks := time.NewTicker(time.Hour)
+	//ticks := time.NewTicker(time.Hour) TODO remove
+	ticks := time.NewTicker(10 * time.Second)
 	defer ticks.Stop()
 	go sc.save(ticks)
 	for {
