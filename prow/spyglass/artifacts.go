@@ -33,7 +33,7 @@ func (s *Spyglass) ListArtifacts(src string) ([]string, error) {
 		return []string{}, fmt.Errorf("error parsing src: %v", err)
 	}
 	gcsKey := ""
-	switch  {
+	switch {
 	case prowio.PathHasStorageProviderPrefix(src):
 		gcsKey = src
 	case keyType == prowKeyType:
@@ -104,7 +104,7 @@ func (s *Spyglass) FetchArtifacts(src string, podName string, sizeLimit int64, a
 		return arts, fmt.Errorf("could not derive job: %v", err)
 	}
 	gcsKey := ""
-	switch  {
+	switch {
 	case prowio.PathHasStorageProviderPrefix(src):
 		gcsKey = strings.TrimSuffix(src, "/")
 	case keyType == prowKeyType:

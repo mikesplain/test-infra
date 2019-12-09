@@ -860,7 +860,7 @@ func handleJobHistory(o options, cfg config.Getter, opener prowio.Opener, log *l
 func handlePRHistory(o options, cfg config.Getter, opener prowio.Opener, gitHubClient deckGitHubClient, gitClient git.ClientFactory, log *logrus.Entry) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		setHeadersNoCaching(w)
-		tmpl, err := getPRHistory(r.URL, cfg(), gcsClient, gitHubClient, gitClient)
+		tmpl, err := getPRHistory(r.URL, cfg(), opener, gitHubClient, gitClient)
 		if err != nil {
 			msg := fmt.Sprintf("failed to get PR history: %v", err)
 			log.WithField("url", r.URL.String()).Info(msg)

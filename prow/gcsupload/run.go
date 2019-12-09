@@ -85,7 +85,7 @@ func (o Options) assembleTargets(spec *downwardapi.JobSpec, extra map[string]pro
 		// ensure that an alias exists for any
 		// job we're uploading artifacts for
 		if alias := gcs.AliasForSpec(spec); alias != "" {
-			uploadTargets[prowio.JoinStoragePath(o.GCSConfiguration.Path,alias)] = prowio.DataUpload(strings.NewReader(jobBasePath), &blob.Attributes{
+			uploadTargets[prowio.JoinStoragePath(o.GCSConfiguration.Path, alias)] = prowio.DataUpload(strings.NewReader(jobBasePath), &blob.Attributes{
 				Metadata: map[string]string{
 					"x-goog-meta-link": jobBasePath,
 				},
@@ -96,7 +96,7 @@ func (o Options) assembleTargets(spec *downwardapi.JobSpec, extra map[string]pro
 			for _, latestBuild := range latestBuilds {
 				dir, filename := path.Split(latestBuild)
 				metadataFromFileName, attrs := AttributesFromFileName(filename)
-				uploadTargets[prowio.JoinStoragePath(o.GCSConfiguration.Path,path.Join(dir, metadataFromFileName))] = prowio.DataUpload(strings.NewReader(spec.BuildID), attrs)
+				uploadTargets[prowio.JoinStoragePath(o.GCSConfiguration.Path, path.Join(dir, metadataFromFileName))] = prowio.DataUpload(strings.NewReader(spec.BuildID), attrs)
 			}
 		}
 	} else {

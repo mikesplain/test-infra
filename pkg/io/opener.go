@@ -172,7 +172,7 @@ func (o *opener) ListSubPaths(ctx context.Context, path string, matchFns ...func
 	if err != nil {
 		return nil, err
 	}
-	pathPrefix := strings.TrimSuffix(path, relativePath +"/")
+	pathPrefix := strings.TrimSuffix(path, relativePath+"/")
 
 	it, err := o.ListSubPathsIter(ctx, path)
 	if err != nil {

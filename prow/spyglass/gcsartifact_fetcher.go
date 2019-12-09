@@ -38,13 +38,13 @@ var (
 
 // GCSArtifactFetcher contains information used for fetching artifacts from GCS
 type GCSArtifactFetcher struct {
-	opener       prowio.Opener
+	opener prowio.Opener
 }
 
 // NewGCSArtifactFetcher creates a new ArtifactFetcher with a real GCS Client
 func NewGCSArtifactFetcher(opener prowio.Opener) *GCSArtifactFetcher {
 	return &GCSArtifactFetcher{
-		opener:       opener,
+		opener: opener,
 	}
 }
 
@@ -68,7 +68,7 @@ func (af *GCSArtifactFetcher) artifacts(key string) ([]string, error) {
 			break
 		}
 		if err != nil {
-			logrus.WithFields(logrus.Fields{"jobPrefix":key}).WithError(err).Error("Error accessing Blob Store artifact.")
+			logrus.WithFields(logrus.Fields{"jobPrefix": key}).WithError(err).Error("Error accessing Blob Store artifact.")
 			if i >= len(wait) {
 				return artifacts, fmt.Errorf("timed out: error accessing artifact: %v", err)
 			}
@@ -91,7 +91,7 @@ type gcsArtifactHandle struct {
 }
 
 func (h *gcsArtifactHandle) NewReader(ctx context.Context) (io.ReadCloser, error) {
-	return h.Opener.Reader(ctx, h.ObjName,nil)
+	return h.Opener.Reader(ctx, h.ObjName, nil)
 }
 
 func (h *gcsArtifactHandle) NewRangeReader(ctx context.Context, offset, length int64) (io.ReadCloser, error) {
@@ -109,8 +109,8 @@ func (af *GCSArtifactFetcher) artifact(key string, artifactName string, sizeLimi
 	objName := prowio.JoinStoragePath(key, artifactName)
 	obj := &gcsArtifactHandle{af.opener, objName}
 	signedURL, err := af.opener.SignedURL(context.TODO(), objName, &blob.SignedURLOptions{
-		Method:         "GET",
-		Expiry:        10 * time.Minute,
+		Method: "GET",
+		Expiry: 10 * time.Minute,
 	})
 	if err != nil {
 		return nil, err

@@ -46,7 +46,7 @@ const (
 )
 
 var (
-	linkRe   = regexp.MustCompile("/([0-9]+)\\.txt$")
+	linkRe = regexp.MustCompile("/([0-9]+)\\.txt$")
 )
 
 type buildData struct {

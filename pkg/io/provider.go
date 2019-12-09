@@ -23,7 +23,7 @@ type StorageProvider interface {
 	SignedURL(ctx context.Context, bucketName, relativePath string, opts *blob.SignedURLOptions) (string, error)
 }
 
-type StorageProviderCreator func([] byte) StorageProvider
+type StorageProviderCreator func([]byte) StorageProvider
 
 type StorageProviderPathIdentifiers struct {
 	StoragePrefix          string
@@ -54,7 +54,6 @@ func getStorageProviderPathIdentifiersFromPath(storagePath string) StorageProvid
 	}
 	return storageProviderPathIdentifiers[DefaultStorageProviderName]
 }
-
 
 func PathHasStorageProviderPrefix(storagePath string) bool {
 	for _, sp := range storageProviderPathIdentifiers {
@@ -126,6 +125,6 @@ func DecodeStorageURL(url string) string {
 // TODO: not sure if it's worth having a separate method, but for now it's easier
 // to track where we're joining storagePath (and where the regular path.Join doesn't
 // work because it removes one of the slashes in e.g. s3://)
-func JoinStoragePath(elem ... string) string {
+func JoinStoragePath(elem ...string) string {
 	return strings.Join(elem, "/")
 }

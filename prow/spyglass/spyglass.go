@@ -144,15 +144,10 @@ func (sg *Spyglass) ResolveSymlink(src string) (string, error) {
 		return src, nil // prowjob keys cannot be symlinks.
 	case prowio.URLHasStorageProviderPrefix(src):
 		src = prowio.DecodeStorageURL(src)
-		reader, err := s.opener.Reader(context.TODO(), src+".txt", nil)
+		reader, err := sg.opener.Reader(context.TODO(), src+".txt", nil)
 		if prowio.IsNotExist(err) {
 			return src, nil
 		}
-		bucketName := parts[0]
-		prefix := parts[1]
-		bkt := sg.client.Bucket(bucketName)
-		obj := bkt.Object(prefix + ".txt")
-		reader, err := obj.NewReader(context.Background())
 		if err != nil {
 			return "", fmt.Errorf("failed to read symlink file (which does seem to exist): %v", err)
 		}
@@ -273,7 +268,7 @@ func (sg *Spyglass) RunPath(src string) (string, error) {
 	switch {
 	case prowio.PathHasStorageProviderPrefix(src):
 		return key, nil
-	case prowKeyType:
+	case keyType == prowKeyType:
 		return sg.prowToGCS(key)
 	default:
 		return "", fmt.Errorf("unrecognized key type for src: %v", src)

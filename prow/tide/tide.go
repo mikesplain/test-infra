@@ -242,7 +242,7 @@ func NewController(ghcSync, ghcStatus github.Client, prowJobClient prowv1.ProwJo
 	return newSyncController(logger, ghcSync, mgr, cfg, gc, sc, hist)
 }
 
-func newStatusController(logger *logrus.Entry, ghc githubClient, mgr manager, gc git.ClientFactory, cfg config.Getter, opener io.Opener, statusURI string) (*statusController, error) {
+func newStatusController(logger *logrus.Entry, ghc githubClient, mgr manager, gc git.ClientFactory, cfg config.Getter, opener prowio.Opener, statusURI string) (*statusController, error) {
 	if err := mgr.GetFieldIndexer().IndexField(&prowapi.ProwJob{}, indexNamePassingJobs, indexFuncPassingJobs); err != nil {
 		return nil, fmt.Errorf("failed to add index for passing jobs to cache: %v", err)
 	}
