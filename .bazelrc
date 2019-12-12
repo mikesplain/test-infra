@@ -68,3 +68,8 @@ build:ci --config=remote --config=ci-instance
 
 # https://github.com/bazelbuild/rules_go/pull/2110#issuecomment-508713878
 build --stamp=true
+
+# TODO: Remove
+
+build --jobs 1
+run --jobs 1
