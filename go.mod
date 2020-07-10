@@ -9,8 +9,9 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20190301231843-5614ed
 // to point to the same kubernetes v0.KubernetesMinor.KubernetesPatch version
 // before running update-deps.sh.
 replace (
-	cloud.google.com/go => cloud.google.com/go v0.44.3
+	cloud.google.com/go => cloud.google.com/go v0.55.0
 	github.com/Azure/go-autorest => github.com/Azure/go-autorest v12.2.0+incompatible
+	github.com/docker/docker => github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
 	golang.org/x/lint => golang.org/x/lint v0.0.0-20190409202823-959b441ac422
 	k8s.io/api => k8s.io/api v0.17.3
 	k8s.io/apimachinery => k8s.io/apimachinery v0.17.3
@@ -19,7 +20,8 @@ replace (
 )
 
 require (
-	cloud.google.com/go v0.47.0
+	cloud.google.com/go/pubsub v1.2.0
+	cloud.google.com/go/storage v1.6.0
 	github.com/Azure/azure-sdk-for-go v38.0.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.8.0
 	github.com/Azure/go-autorest/autorest v0.9.6
@@ -35,7 +37,7 @@ require (
 	github.com/clarketm/json v1.13.4
 	github.com/client9/misspell v0.3.4
 	github.com/djherbis/atime v1.0.0
-	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
+	github.com/docker/docker v1.13.1
 	github.com/evanphx/json-patch v4.5.0+incompatible
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/fsouza/fake-gcs-server v0.0.0-20180612165233-e85be23bdaa8
@@ -43,9 +45,9 @@ require (
 	github.com/go-openapi/spec v0.19.6
 	github.com/go-test/deep v1.0.4
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/golang/mock v1.3.1
+	github.com/golang/mock v1.4.3
 	github.com/gomodule/redigo v1.7.0
-	github.com/google/go-cmp v0.4.0
+	github.com/google/go-cmp v0.4.1
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/csrf v1.6.2
@@ -69,28 +71,28 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v0.0.6
 	github.com/spf13/pflag v1.0.5
-	github.com/tektoncd/pipeline v0.11.0
-	go.uber.org/zap v1.14.1
+	github.com/tektoncd/pipeline v0.14.1
+	go.uber.org/zap v1.15.0
 	gocloud.dev v0.19.0
-	golang.org/x/crypto v0.0.0-20200302210943-78000ba7a073
+	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
-	golang.org/x/net v0.0.0-20200301022130-244492dfa37a
+	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
-	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
+	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
 	golang.org/x/sys v0.0.0-20200610111108-226ff32320da // indirect
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0
-	golang.org/x/tools v0.0.0-20200303214625-2b0b585e22fe
-	google.golang.org/api v0.15.0
+	golang.org/x/tools v0.0.0-20200329025819-fd4102a86c65
+	google.golang.org/api v0.20.0
 	gopkg.in/fsnotify.v1 v1.4.7
 	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5
 	gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
-	k8s.io/api v0.17.3
-	k8s.io/apimachinery v0.17.3
-	k8s.io/client-go v9.0.0+incompatible
-	k8s.io/code-generator v0.17.3
+	k8s.io/api v0.17.6
+	k8s.io/apimachinery v0.17.6
+	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
+	k8s.io/code-generator v0.18.0
 	k8s.io/klog v1.0.0
-	k8s.io/utils v0.0.0-20191114184206-e782cd3c129f
-	knative.dev/pkg v0.0.0-20200207155214-fef852970f43
+	k8s.io/utils v0.0.0-20200124190032-861946025e34
+	knative.dev/pkg v0.0.0-20200528142800-1c6815d7e4c9
 	mvdan.cc/xurls/v2 v2.0.0
 	sigs.k8s.io/boskos v0.0.0-20200526191642-45fc818e2d00
 	sigs.k8s.io/controller-runtime v0.5.4
