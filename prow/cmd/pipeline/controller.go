@@ -652,6 +652,30 @@ func makePipelineRun(pj prowjobv1.ProwJob) (*pipelinev1beta1.PipelineRun, error)
 		// Change resource ref to resource spec
 		name := pj.Name + suffix
 		fmt.Printf("future name %v, refs: %v, pj: %v, i: %v\n", name, refs, pj, i)
+		var commit string
+
+		// Default to base ref
+		commit = refs.BaseRef
+		// Override for PRs
+		if len(refs.Pulls) > 0 {
+			for _, r := range refs.Pulls {
+				if len(r.SHA) > 0 {
+					commit = r.SHA
+					break
+				}
+			}
+		}
+
+		p.Spec.Params = []pipelinev1beta1.Param{
+			{
+				Name:  "repo-url",
+				Value: pipelinev1beta1.NewArrayOrString(refs.CloneURI),
+			},
+			{
+				Name:  "commit",
+				Value: pipelinev1beta1.NewArrayOrString(commit),
+			},
+		}
 
 	}
 
