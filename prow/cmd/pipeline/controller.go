@@ -651,7 +651,7 @@ func makePipelineRun(pj prowjobv1.ProwJob) (*pipelinev1beta1.PipelineRun, error)
 		}
 		// Change resource ref to resource spec
 		name := pj.Name + suffix
-		fmt.Printf("future name %v, refs: %v, pj: %v, i: %v\n", name, refs, pj, i)
+		logrus.Debugf("future name %v, refs: %v, pj: %v, i: %v\n", name, refs, pj, i)
 		var commit string
 
 		// Default to base ref
@@ -678,6 +678,8 @@ func makePipelineRun(pj prowjobv1.ProwJob) (*pipelinev1beta1.PipelineRun, error)
 		}
 
 	}
+
+	logrus.Debugf("Returning pipeline run spec: %v", p)
 
 	return &p, nil
 }
