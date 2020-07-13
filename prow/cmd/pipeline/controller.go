@@ -679,6 +679,9 @@ func makePipelineRun(pj prowjobv1.ProwJob) (*pipelinev1beta1.PipelineRun, error)
 
 	}
 
+	// Temporarily empty this since we don't want to use this with betas.
+	p.Spec.Resources = []pipelinev1beta1.PipelineResourceBinding{}
+
 	logrus.Debugf("Returning pipeline run spec: %v", p)
 
 	return &p, nil
