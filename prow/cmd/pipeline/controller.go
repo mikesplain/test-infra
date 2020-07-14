@@ -464,6 +464,7 @@ func updateProwJobState(c reconciler, key string, newPipelineRun bool, pj *prowj
 		}
 		newpj.Status.State = state
 		newpj.Status.Description = msg
+		newpj.Status.URL = fmt.Sprintf("https://tekton.build.k.do.ws.sonos.com/#/namespaces/tekton-poc/pipelineruns/%s", pj.ObjectMeta.Name)
 		logrus.Infof("Update ProwJob/%s: %s -> %s: %s", key, haveState, state, msg)
 
 		if _, err := c.patchProwJob(pj, newpj); err != nil {
