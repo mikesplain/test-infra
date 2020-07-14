@@ -653,6 +653,7 @@ func makePipelineRun(pj prowjobv1.ProwJob) (*pipelinev1beta1.PipelineRun, error)
 		name := pj.Name + suffix
 		logrus.Debugf("future name %v, refs: %v, pj: %v, i: %v\n", name, refs, pj, i)
 		var commit string
+		var gitUrl string
 
 		// Default to base ref
 		commit = refs.BaseRef
@@ -666,13 +667,18 @@ func makePipelineRun(pj prowjobv1.ProwJob) (*pipelinev1beta1.PipelineRun, error)
 			}
 		}
 
+		gitUrl = refs.CloneURI
+		if gitUrl == "" {
+			gitUrl = fmt.Sprintf("https://github.com/%s/%s", refs.Org, refs.Repo)
+		}
+
 		p.Spec.Params = []pipelinev1beta1.Param{
 			{
-				Name:  "repo-url",
-				Value: pipelinev1beta1.NewArrayOrString(refs.CloneURI),
+				Name:  "gitUrl",
+				Value: pipelinev1beta1.NewArrayOrString(gitUrl),
 			},
 			{
-				Name:  "commit",
+				Name:  "gitRevision",
 				Value: pipelinev1beta1.NewArrayOrString(commit),
 			},
 		}
