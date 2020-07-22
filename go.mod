@@ -10,6 +10,7 @@ replace github.com/golang/lint => golang.org/x/lint v0.0.0-20190301231843-5614ed
 // before running update-deps.sh.
 replace (
 	github.com/Azure/go-autorest => github.com/Azure/go-autorest v12.2.0+incompatible
+	github.com/docker/docker => github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
 	golang.org/x/lint => golang.org/x/lint v0.0.0-20190409202823-959b441ac422
 	k8s.io/api => k8s.io/api v0.17.3
 	k8s.io/apimachinery => k8s.io/apimachinery v0.17.3
@@ -36,7 +37,7 @@ require (
 	github.com/clarketm/json v1.13.4
 	github.com/client9/misspell v0.3.4
 	github.com/djherbis/atime v1.0.0
-	github.com/docker/docker v1.4.2-0.20200203170920-46ec8731fbce
+	github.com/docker/docker v1.13.1
 	github.com/evanphx/json-patch v4.5.0+incompatible
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/fsouza/fake-gcs-server v1.19.4
@@ -70,9 +71,9 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v0.0.6
 	github.com/spf13/pflag v1.0.5
-	github.com/tektoncd/pipeline v0.11.0
+	github.com/tektoncd/pipeline v0.14.1
 	go.opencensus.io v0.22.4 // indirect
-	go.uber.org/zap v1.14.1
+	go.uber.org/zap v1.15.0
 	gocloud.dev v0.19.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
@@ -89,13 +90,13 @@ require (
 	gopkg.in/fsnotify.v1 v1.4.7
 	gopkg.in/robfig/cron.v2 v2.0.0-20150107220207-be2e0b0deed5
 	gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
-	k8s.io/api v0.17.3
-	k8s.io/apimachinery v0.17.3
-	k8s.io/client-go v9.0.0+incompatible
-	k8s.io/code-generator v0.17.3
+	k8s.io/api v0.17.6
+	k8s.io/apimachinery v0.17.6
+	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
+	k8s.io/code-generator v0.18.0
 	k8s.io/klog v1.0.0
-	k8s.io/utils v0.0.0-20191114184206-e782cd3c129f
-	knative.dev/pkg v0.0.0-20200207155214-fef852970f43
+	k8s.io/utils v0.0.0-20200124190032-861946025e34
+	knative.dev/pkg v0.0.0-20200528142800-1c6815d7e4c9
 	mvdan.cc/xurls/v2 v2.0.0
 	sigs.k8s.io/boskos v0.0.0-20200526191642-45fc818e2d00
 	sigs.k8s.io/controller-runtime v0.5.4
