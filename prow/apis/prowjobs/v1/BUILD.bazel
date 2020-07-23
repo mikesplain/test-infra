@@ -14,6 +14,7 @@ go_library(
         "//prow/apis/prowjobs:go_default_library",
         "//prow/github:go_default_library",
         "@com_github_tektoncd_pipeline//pkg/apis/pipeline/v1alpha1:go_default_library",
+        "@com_github_tektoncd_pipeline//pkg/apis/pipeline/v1beta1:go_default_library",
         "@io_k8s_api//core/v1:go_default_library",
         "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
         "@io_k8s_apimachinery//pkg/runtime:go_default_library",

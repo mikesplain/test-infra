@@ -24,6 +24,7 @@ import (
 	url "net/url"
 
 	v1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	v1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
@@ -265,6 +266,11 @@ func (in *ProwJobSpec) DeepCopyInto(out *ProwJobSpec) {
 	if in.PipelineRunSpec != nil {
 		in, out := &in.PipelineRunSpec, &out.PipelineRunSpec
 		*out = new(v1alpha1.PipelineRunSpec)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.PipelineRunSpecV2 != nil {
+		in, out := &in.PipelineRunSpecV2, &out.PipelineRunSpecV2
+		*out = new(v1beta1.PipelineRunSpec)
 		(*in).DeepCopyInto(*out)
 	}
 	if in.DecorationConfig != nil {

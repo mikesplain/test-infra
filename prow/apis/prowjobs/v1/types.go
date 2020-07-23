@@ -26,6 +26,7 @@ import (
 	"time"
 
 	pipelinev1alpha1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
+	pipelinev1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -159,6 +160,11 @@ type ProwJobSpec struct {
 	// a pipeline-crd resource
 	// https://github.com/tektoncd/pipeline
 	PipelineRunSpec *pipelinev1alpha1.PipelineRunSpec `json:"pipeline_run_spec,omitempty"`
+
+	// PipelineRunSpecV2 provides the basis for running the test as
+	// a pipeline-crd resource
+	// https://github.com/tektoncd/pipeline
+	PipelineRunSpecV2 *pipelinev1beta1.PipelineRunSpec `json:"pipeline_run_spec_v2,omitempty"`
 
 	// DecorationConfig holds configuration options for
 	// decorating PodSpecs that users provide
